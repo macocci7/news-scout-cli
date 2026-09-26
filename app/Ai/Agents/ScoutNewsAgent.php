@@ -3,6 +3,7 @@
 namespace App\Ai\Agents;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Attributes\UseCheapestModel;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasStructuredOutput;
@@ -14,6 +15,7 @@ use Laravel\Ai\Providers\Tools\ProviderTool;
 use Laravel\Ai\Providers\Tools\WebSearch;
 use Stringable;
 
+#[UseCheapestModel]
 class ScoutNewsAgent implements Agent, Conversational, HasTools, HasStructuredOutput
 {
     use Promptable;
