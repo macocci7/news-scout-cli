@@ -1,58 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# News Scout CLI (Powered by Laravel AI SDK)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+指定トピックの最新ニュースを収集するCLIツールです。
 
-## About Laravel
+<img src="news-scout-cli-01.png" width="600" />
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 前提
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- 対応言語：日本語
+- [Git](https://git-scm.com/book/ja/v2/%E4%BD%BF%E3%81%84%E5%A7%8B%E3%82%81%E3%82%8B-Git%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)インストール済（なくても使えます。あればコピーと更新が楽。）
+- PHP8.3CLI以降インストール済（Laravel13要件）
+- [Composer v2](https://getcomposer.org/) インストール済
+- [Laravel AI SDK WebSearch provider tool](https://laravel.com/framework/docs/13.x/ai-sdk#web-search)サポート対象のAIサービスが利用可能
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 使い方
 
-## Learning Laravel
+このリポジトリを何らかの手段でローカルにコピーしてください。
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+▼Gitが使える場合
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/macocci7/news-scout-cli.git
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+▼Gitが使えない場合
+- [https://github.com/macocci7/news-scout-cli](https://github.com/macocci7/news-scout-cli)を開く
+- 画面上部緑色の「Code」ボタンから「Download ZIP」を選択
+- ダウンロードしたZIPを展開
 
-## Contributing
+ローカルにコピーしたリポジトリのフォルダに入ります。
+```bash
+cd news-scout-cli
+```
+次のコマンドで依存関係をインストールしてください。
+```bash
+composer install
+php artisan vendor:publish --provider="Laravel\Ai\AiServiceProvider"
+```
+`.env`に[APIキー](https://laravel.com/framework/docs/13.x/ai-sdk#configuration)を設定してください。
+```
+OPENAI_API_KEY=sk-proj-********************************
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+CLI上でコマンドで実行します。
 
-## Code of Conduct
+▼コマンドの書式
+```bash
+Usage:
+  scout:news [options] [--] [<provider> [<model>]]
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Arguments:
+  provider                     AIプロバイダー 例: openai, gemini
+  model                        AIモデル名
 
-## Security Vulnerabilities
+Options:
+      --topic[=TOPIC]          トピック指定 (multiple values allowed)
+      --add-topic[=ADD-TOPIC]  デフォルトと併せて追加指定するトピック (multiple values allowed)
+      --days[=DAYS]            過去何日分のニュースを取得するか
+      --max[=MAX]              最大取得件数
+      --location[=LOCATION]    地域指定。city/region/country 例: Shinjuku/Tokyo/JP
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+▼コマンド例
+```bash
+php artisan scout:news
+php artisan scout:news openai
+php artisan scout:news openai gpt-5.6-luna
+php artisan scout:news --topic=ゲーム --topic=アニメ
+php artisan scout:news --add-topic=ゲーム --add-topic=アニメ
+php artisan scout:news --days=1 --max=5 --location=Shinjuku/Tokyo/JP
+```
+プロバイダー名を省略した場合、`config/ai.php`内の`default`の値(openai)が選択されます。
 
-## License
+モデル名を省略した場合、一番安いモデルが選択されます。
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+該当するプロバイダー・モデルが無い場合、エラーになります。
+
+AIからのレスポンスは`storage/app/private/`にJSON形式で保存されます。
+
+AIからのレスポンスを基に生成したニュース一覧は`storage/app/public/`にMarkdown形式で保存されます。
+
+<img src="news-scout-cli-02.png" width="600" />
+
+## アップデートの仕方
+
+▼依存関係のアップデート
+```bash
+composer update
+```
+▼このリポジトリの更新をローカルに反映する
+```bash
+git fetch origin
+git pull origin main
+```
+▼上記２つをまとめて実行
+```bash
+composer update-repo
+```
+
+## LICENSE
+
+[MIT](LICENSE)

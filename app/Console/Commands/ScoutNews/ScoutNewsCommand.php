@@ -10,7 +10,7 @@ use Laravel\Ai\Enums\Lab;
 use function Laravel\Prompts\spin;
 
 #[Signature('scout:news
-             {provider? : AIプロバイダー 例: openai, ollama}
+             {provider? : AIプロバイダー 例: openai, gemini}
              {model? : AIモデル名}
              {--topic=* : トピック指定}
              {--add-topic=* : デフォルトと併せて追加指定するトピック}
