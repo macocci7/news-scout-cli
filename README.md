@@ -80,22 +80,6 @@ AIからのレスポンスを基に生成したニュース一覧は`storage/app
 
 <img src="news-scout-cli-02.png" width="600" />
 
-## アップデートの仕方
-
-▼依存関係のアップデート
-```bash
-composer update
-```
-▼このリポジトリの更新をローカルに反映する
-```bash
-git fetch origin
-git pull origin main
-```
-▼上記２つをまとめて実行
-```bash
-composer update-repo
-```
-
 ## LICENSE
 
 [MIT](LICENSE)
