@@ -27,6 +27,7 @@ class ScoutNewsAgent implements Agent, Conversational, HasTools, HasStructuredOu
      */
     public function __construct(
         protected array $location,
+        protected int $maxResults = 10,
     ) {
     }
 
@@ -76,7 +77,7 @@ class ScoutNewsAgent implements Agent, Conversational, HasTools, HasStructuredOu
                 'title' => $schema->string()->description('The title of the news item')->required(),
                 'summary' => $schema->string()->description('The description of the news item')->required(),
                 'url' => $schema->string()->description('The URL of the news item')->required(),
-            ])->description('The list of news items')->required(),
+            ])->description('The list of news items. ' . 'Maximum results: ' . $this->maxResults)->required(),
             'count' => $schema->integer()->description('The total number of news items')->required(),
         ];
     }
