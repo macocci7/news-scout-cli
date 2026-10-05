@@ -7,8 +7,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "laravel/ai": "^0.11.2",
-        "laravel/framework": "^13.17",
+        "laravel/ai": "^1.0",
+        "laravel/framework": "^13.34",
         "laravel/tinker": "^3.0"
     },
     "require-dev": {
@@ -40,11 +40,6 @@
             "@php artisan migrate --force",
             "npm install --ignore-scripts",
             "npm run build"
-        ],
-        "update-repo": [
-            "composer update",
-            "git fetch origin",
-            "git pull origin main"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
