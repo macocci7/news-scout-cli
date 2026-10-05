@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\ScoutNews;
+namespace App\ScoutNews;
 
 use App\Ai\Agents\ScoutNewsAgent;
 use Laravel\Ai\Enums\Lab;
