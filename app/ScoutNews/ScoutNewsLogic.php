@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Console\Commands\ScoutNews;
+namespace App\ScoutNews;
 
 use App\Ai\Agents\ScoutNewsAgent;
 use Laravel\Ai\Enums\Lab;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Laravel\Ai\Responses\StructuredAgentResponse;
+use Macocci7\BashColorizer\Colorizer;
 
 use function Laravel\Prompts\{error, info, spin};
 
 class ScoutNewsLogic
 {
+    protected TokenUsages $usages;
+
     public function __construct(
         protected ?Lab $provider = null,
         protected ?string $model = null,
@@ -19,6 +23,7 @@ class ScoutNewsLogic
         protected int $maxResults,
         protected array $location,
     ) {
+        $this->usages = new TokenUsages;
     }
 
     public function run()
@@ -30,7 +35,7 @@ class ScoutNewsLogic
             'location' => $this->location,
         ]) . PHP_EOL;
         $response = spin(
-            callback: fn () => (new ScoutNewsAgent($this->location))
+            callback: fn () => (new ScoutNewsAgent($this->location, $this->maxResults))
                 ->setInstructions(view('scout-news.instructions.scout-news'))
                 ->prompt(view('scout-news.prompts.scout-news', [
                         'topics' => $this->topics,
@@ -43,7 +48,9 @@ class ScoutNewsLogic
                 ),
             message: 'ニュース記事を収集中です。。',
         );
+        $this->usages->append($response);
         $this->storeNews($response);
+        $this->displayTokenUsage();
     }
 
     protected function storeNews(StructuredAgentResponse $response): void
@@ -90,6 +97,28 @@ class ScoutNewsLogic
             error("⚠️ Markdown保存失敗: $filePath");
         } else {
             info("✅ Markdown保存成功: $filePath");
+        }
+    }
+
+    /**
+     * トークン使用量を表示
+     */
+    public function displayTokenUsage(): void
+    {
+        Colorizer::attributes(["bold"])
+            ->background("#ffaa00")
+            ->foreground("#000000")
+            ->echo(" トークン使用量 ", PHP_EOL);
+        foreach ($this->usages->summary() as $usage) {
+            $lv = max(array_map(fn ($v) => strlen($v), [
+                number_format($usage["inputTokens"]),
+                number_format($usage["outputTokens"]),
+                number_format($usage["totalTokens"]),
+            ]));
+            echo "- 🏢 " . $usage["provider"] . " / 🤖 " . $usage["model"] . PHP_EOL;
+            echo "  - 入力トークン: " . Str::padLeft(number_format($usage["inputTokens"]), $lv) . PHP_EOL;
+            echo "  - 出力トークン: " . Str::padLeft(number_format($usage["outputTokens"]), $lv) . PHP_EOL;
+            echo "  - 合計トークン: " . Str::padLeft(number_format($usage["totalTokens"]), $lv) . PHP_EOL;
         }
     }
 }

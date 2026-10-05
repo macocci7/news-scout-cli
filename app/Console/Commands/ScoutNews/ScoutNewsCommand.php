@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\ScoutNews;
 
+use App\ScoutNews\ScoutNewsLogic;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
